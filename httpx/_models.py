@@ -458,6 +458,8 @@ class Response:
         history: typing.Optional[typing.List["Response"]] = None,
         default_encoding: typing.Union[str, typing.Callable[[bytes], str]] = "utf-8",
     ):
+        self.ok = not codes.is_error(status_code)
+
         self.status_code = status_code
         self.headers = Headers(headers)
 

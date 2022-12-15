@@ -43,6 +43,26 @@ def test_client_header():
     }
 
 
+def test_client_header_none():
+    """
+    Set a header in the Client.
+    """
+    url = "http://example.org/echo_headers"
+
+    client = httpx.Client(transport=httpx.MockTransport(echo_headers), headers=None)
+    response = client.get(url, headers={
+        "content-type": "text/demo-type"
+    })
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "headers": {
+            "host": "example.org",
+            "content-type": "text/demo-type"
+        }
+    }
+
+
 def test_header_merge():
     url = "http://example.org/echo_headers"
     client_headers = {"User-Agent": "python-myclient/0.2.1"}

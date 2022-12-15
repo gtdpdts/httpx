@@ -177,10 +177,13 @@ class BaseClient:
         event_hooks = {} if event_hooks is None else event_hooks
 
         self._base_url = self._enforce_trailing_slash(URL(base_url))
-
+        
         self._auth = self._build_auth(auth)
         self._params = QueryParams(params)
-        self.headers = Headers(headers)
+        
+        # if empty_headers params put it empty values...
+        self.headers = Headers(headers) if headers is not None else None
+        
         self._cookies = Cookies(cookies)
         self._timeout = Timeout(timeout)
         self.follow_redirects = follow_redirects
@@ -293,7 +296,8 @@ class BaseClient:
                 b"Connection": b"keep-alive",
                 b"User-Agent": USER_AGENT.encode("ascii"),
             }
-        )
+        ) if headers is not None else Headers({})
+
         client_headers.update(headers)
         self._headers = client_headers
 
@@ -593,7 +597,9 @@ class Client(BaseClient):
     * **params** - *(optional)* Query parameters to include in request URLs, as
     a string, dictionary, or sequence of two-tuples.
     * **headers** - *(optional)* Dictionary of HTTP headers to include when
-    sending requests.
+    sending requests. If set None removed default header values on request and
+    can re-set with header values on call get, post and more methods with
+    headers parameter.
     * **cookies** - *(optional)* Dictionary of Cookie items to include when
     sending requests.
     * **verify** - *(optional)* SSL certificates (a.k.a CA bundle) used to
